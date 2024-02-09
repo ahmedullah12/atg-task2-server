@@ -32,5 +32,79 @@ router.post('/posts', async (req, res) => {
     }
 });
 
+router.delete('/posts/:postId', async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        console.log(postId);
+        const existingPost = await Post.findById(postId);
+        if (!existingPost) {
+            return res.status(404).json({ status: false, message: 'Post not found' });
+        }
+
+        await Post.findByIdAndDelete(postId);
+        res.json({ status: true, message: 'Post deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: false, message: 'Internal server error' });
+    }
+});
+
+router.get('/my-posts', async (req, res) => {
+    try {
+        const userEmail = req.query.email;
+        if (!userEmail) {
+            return res.status(400).json({ status: false, message: 'User email is required' });
+        }
+
+        const query = { userEmail };
+        const myPosts = await Post.find(query).sort({ _id: -1 });
+
+        res.json({ status: true, myPosts });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: false, message: 'Internal server error' });
+    }
+});
+
+router.put('/posts/:postId', async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const { newDesc } = req.body;
+
+        const existingPost = await Post.findById(postId);
+        if (!existingPost) {
+            return res.status(404).json({ status: false, message: 'Post not found' });
+        }
+
+        existingPost.desc = newDesc;
+        const updatedPost = await existingPost.save();
+
+        res.json({ status: true, message: 'Post has been updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: false, message: 'Internal server error' });
+    }
+});
+
+router.post('/posts/:postId/comments', async (req, res) => {
+    try {
+      const postId = req.params.postId;
+      const { userId, userEmail, userName, comment } = req.body;
+
+      const existingPost = await Post.findById(postId);
+      if (!existingPost) {
+        return res.status(404).json({ status: false, message: 'Post not found' });
+      }
+
+      existingPost.comments.push({ userId, userEmail, userName, comment });
+      const updatedPost = await existingPost.save();
+  
+      res.json({ status: true, message: 'Comment added successfully', updatedPost });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: false, message: 'Internal server error' });
+    }
+  });
+
 export {router as PostRouter}
 
