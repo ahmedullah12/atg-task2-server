@@ -7,7 +7,10 @@ const commentSchema = new mongoose.Schema({
     userEmail: {type: String,required: true,},
     userName: {type: String,required: true,},
     comment: {type: String,required: true,},
-  });
+});
+const likeSchema = new mongoose.Schema({
+    userId: {type: String,required: true,},
+});
 
 const PostSchema = new mongoose.Schema({
     desc: {type: String, required: true},
@@ -16,6 +19,7 @@ const PostSchema = new mongoose.Schema({
     userId: {type: String, required: true},
     userName: {type: String, required: true},
     comments:{type: [commentSchema], default: []},
+    likes: {type: [likeSchema], default: []}
 });
 
 const PostModel = mongoose.model("posts", PostSchema);
