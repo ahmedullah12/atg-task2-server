@@ -133,7 +133,7 @@ router.get('/verify', verifyUser, (req, res) => {
 
 
 router.get('/logout', (req, res) => {
-    res.clearCookie("token");
+    res.clearCookie("token", { domain: "https://atg-social.netlify.app" });
     return res.json({status: true, message: "User logged out"})
 })
 
