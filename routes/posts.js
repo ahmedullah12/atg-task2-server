@@ -35,7 +35,6 @@ router.post('/posts', async (req, res) => {
 router.delete('/posts/:postId', async (req, res) => {
     try {
         const postId = req.params.postId;
-        console.log(postId);
         const existingPost = await Post.findById(postId);
         if (!existingPost) {
             return res.status(404).json({ status: false, message: 'Post not found' });
@@ -86,7 +85,7 @@ router.put('/posts/:postId', async (req, res) => {
     }
 });
 
-router.post('/posts/:postId/comments', async (req, res) => {
+router.post('/posts/comments/:postId', async (req, res) => {
     try {
       const postId = req.params.postId;
       const { userId, userEmail, userName, comment } = req.body;
